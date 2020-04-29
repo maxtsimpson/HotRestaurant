@@ -1,4 +1,5 @@
 const fs = require("fs");
+const Reservation = require("./reservation");
 
 class ReservationRepo {
     constructor() {
@@ -18,7 +19,7 @@ class ReservationRepo {
     }
 
     storeReservations(){
-        fs.writeFileSync("./reservations.json", JSON.stringify(this.reservations), (err) => {
+        fs.writeFileSync("./reservations.json", JSON.stringify(this.reservations,undefined,2)), (err) => {
             if (err) throw err;
         })
     }
@@ -28,15 +29,17 @@ class ReservationRepo {
             if (fs.existsSync("./reservations.json")) {
                 let fileContents = io.readFromFile("./reservations.json");
                 let json = JSON.parse(fileContents);
-                return json.map(this.createReservationFromJSON)
+                let reservations = json.map(j => this.createReservationFromJSON(j))
+                console.log({reservations})
             }            
         } catch (error) {
             return [];
         }
     }
 
-    createReservationFromJSON(){
-        const {id,time} = jsonObject
+    createReservationFromJSON(jsonObject){
+        const {id,time, email, phoneNumber} = jsonObject
+        return new Reservation (id,time, email, phoneNumber)
     }
 }
 
